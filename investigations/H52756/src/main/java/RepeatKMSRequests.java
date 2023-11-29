@@ -1,3 +1,10 @@
+// RepeatKMSRequests repeatedly uses new ClientEncryption objects to encrypt data.
+// This is intended to test repeated KMS requests.
+// Use IntelliJ to run. Set the following required environment variables:
+// - AWS_ACCESS_KEY_ID
+// - AWS_SECRET_ACCESS_KEY
+// - AWS_KEY_ID to the key ARN.
+
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
