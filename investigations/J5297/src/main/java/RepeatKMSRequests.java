@@ -1,9 +1,11 @@
 // RepeatKMSRequests repeatedly uses new ClientEncryption objects to encrypt data.
 // This is intended to test repeated KMS requests.
 // Use IntelliJ to run. Set the following required environment variables:
-// - AWS_ACCESS_KEY_ID
-// - AWS_SECRET_ACCESS_KEY
-// - AWS_KEY_ID to the key ARN.
+// - AZURE_TENANT_ID
+// - AZURE_CLIENT_ID
+// - AZURE_CLIENT_SECRET
+// - AZURE_KEY_VAULT_ENDPOINT to the key vault URL.
+// - AZURE_KEY_NAME to the key name.
 
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
@@ -27,9 +29,11 @@ public class RepeatKMSRequests {
     static final ConnectionString CONNECTION_STRING = new ConnectionString("mongodb://localhost:27017");
     static final MongoNamespace VAULT_NAMESPACE = new MongoNamespace("csfle", "vault");
     static final String ENCRYPTION_ALGORITHM = "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic";
-    protected static final Map<String, Map<String, Object>> KMS_PROVIDERS = Map.of("aws",
-            Map.of("accessKeyId", getRequiredEnv("AWS_ACCESS_KEY_ID"),
-                    "secretAccessKey", getRequiredEnv("AWS_SECRET_ACCESS_KEY")));
+    protected static final Map<String, Map<String, Object>> KMS_PROVIDERS = Map.of("azure",
+            Map.of("tenantId", getRequiredEnv("AZURE_TENANT_ID"),
+                    "clientId", getRequiredEnv("AZURE_CLIENT_ID"),
+                    "clientSecret", getRequiredEnv("AZURE_CLIENT_SECRET")
+            ));
     static final String DATABASE = "test";
     static final String COLLECTION = "coll";
 
@@ -61,8 +65,10 @@ public class RepeatKMSRequests {
         BsonBinary dataKey;
         try (var encryptor = ClientEncryptions.create(ceSettings)) {
             var dko = new DataKeyOptions();
-            dko.masterKey(new BsonDocument().append("key", new BsonString(getRequiredEnv("AWS_KEY_ID"))).append("region", new BsonString("us-east-1")));
-            dataKey = encryptor.createDataKey("aws", dko);
+            dko.masterKey(new BsonDocument()
+                    .append("keyVaultEndpoint", new BsonString(getRequiredEnv("AZURE_KEY_VAULT_ENDPOINT")))
+                    .append("keyName", new BsonString(getRequiredEnv("AZURE_KEY_NAME"))));
+            dataKey = encryptor.createDataKey("azure", dko);
         }
 
         // Repeatedly use the DEK. This is expected to result in one KMS request per iteration.
