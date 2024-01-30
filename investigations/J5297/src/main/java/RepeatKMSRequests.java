@@ -1,11 +1,33 @@
-// RepeatKMSRequests repeatedly uses new ClientEncryption objects to encrypt data.
-// This is intended to test repeated KMS requests.
-// Use IntelliJ to run. Set the following required environment variables:
-// - AZURE_TENANT_ID
-// - AZURE_CLIENT_ID
-// - AZURE_CLIENT_SECRET
-// - AZURE_KEY_VAULT_ENDPOINT to the key vault URL.
-// - AZURE_KEY_NAME to the key name.
+/*
+RepeatKMSRequests repeatedly uses new ClientEncryption objects to encrypt data.
+This is intended to test repeated KMS requests.
+Use IntelliJ to run. Set the following required environment variables:
+- AZURE_TENANT_ID
+- AZURE_CLIENT_ID
+- AZURE_CLIENT_SECRET
+- AZURE_KEY_VAULT_ENDPOINT to the key vault URL.
+- AZURE_KEY_NAME to the key name.
+
+Sample output:
+```
+Total requests run    : 1000
+Duration              : 386.25s
+Avg requests/sec      : 2.59
+Max request time      : 1.89s
+Median request time   : 0.35s
+Histogram
+[0.00-0.19s) : 0 (0.00%)
+[0.19-0.38s) : 702 (70.20%)
+[0.38-0.57s) : 221 (22.10%)
+[0.57-0.76s) : 63 (6.30%)
+[0.76-0.94s) : 9 (0.90%)
+[0.94-1.13s) : 3 (0.30%)
+[1.13-1.32s) : 0 (0.00%)
+[1.32-1.51s) : 1 (0.10%)
+[1.51-1.70s) : 0 (0.00%)
+[1.70-1.89s] : 1 (0.10%)
+```
+ */
 
 import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
